@@ -1,10 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, Suspense } from 'react';
-import { signIn, getSession, useSession } from 'next-auth/react';
+import { useState, Suspense, useEffect } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
 
 function LoginForm() {
   const router = useRouter();
@@ -41,12 +40,7 @@ function LoginForm() {
       });
 
       if (!res?.error) {
-        const currentSession = await getSession();
-        if ((currentSession?.user as any)?.isAdmin) {
-          router.push('/admin');
-        } else {
-          router.push(callbackUrl);
-        }
+        // Refresh so the session cookie is applied, then let useEffect redirect
         router.refresh();
       } else {
         setError(res.error);
