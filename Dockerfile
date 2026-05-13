@@ -1,13 +1,15 @@
 FROM node:22-alpine AS base
 
-# Install dependencies only when needed
+# 1. Tahap Install Dependencies
 FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+# Jika kamu menggunakan Prisma, pastikan file schema ikut disalin di sini 
+# agar prisma generate bisa berjalan jika dipicu oleh postinstall
+COPY prisma ./prisma/ 
+
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
@@ -15,15 +17,25 @@ RUN \
   else echo "Lockfile not found." && npm install; \
   fi
 
-# Rebuild the source code only when needed
+# 2. Tahap Rebuild Source Code
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Next.js telemetry is disabled
+# Menonaktifkan telemetri Next.js
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# --- BAGIAN PERBAIKAN: GENERATE PRISMA CLIENT ---
+RUN \
+  if [ -f yarn.lock ]; then yarn prisma generate; \
+  elif [ -f package-lock.json ]; then npx prisma generate; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm prisma generate; \
+  else npx prisma generate; \
+  fi
+# ------------------------------------------------
+
+# Jalankan Build Next.js
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
@@ -31,7 +43,7 @@ RUN \
   else npm run build; \
   fi
 
-# Production image, copy all the files and run next
+# 3. Tahap Production Runner
 FROM base AS runner
 WORKDIR /app
 
@@ -43,12 +55,11 @@ RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 
-# Set the correct permission for prerender cache
+# Set permission untuk cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
+# Ambil hasil build standalone
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
@@ -57,7 +68,6 @@ USER nextjs
 EXPOSE 3000
 
 ENV PORT 3000
-# set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
 
 CMD ["node", "server.js"]
