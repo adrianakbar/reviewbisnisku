@@ -329,6 +329,42 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* Bukti Gambar Review */}
+            <div className="mt-16 flex flex-col items-center">
+              <h3 className="text-title-lg font-title-lg text-on-surface mb-8 text-center">
+                Bukti Nyata Ulasan Klien Kami
+              </h3>
+              <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-6 md:pb-0 md:grid md:grid-cols-3 md:gap-8 w-full max-w-6xl mx-auto px-4 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div className="relative group overflow-hidden rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-outline-variant/60 flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-auto snap-center">
+                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300 pointer-events-none z-10"></div>
+                  <img 
+                    src="/review1.png" 
+                    alt="Bukti Review Google Maps 1" 
+                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="relative group overflow-hidden rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-outline-variant/60 flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-auto snap-center">
+                  <div className="absolute inset-0 bg-secondary/0 group-hover:bg-secondary/5 transition-colors duration-300 pointer-events-none z-10"></div>
+                  <img 
+                    src="/review2.png" 
+                    alt="Bukti Review Google Maps 2" 
+                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="relative group overflow-hidden rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-outline-variant/60 flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-auto snap-center">
+                  <div className="absolute inset-0 bg-secondary/0 group-hover:bg-secondary/5 transition-colors duration-300 pointer-events-none z-10"></div>
+                  <img 
+                    src="/review3.png" 
+                    alt="Bukti Review Google Maps 3" 
+                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
