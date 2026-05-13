@@ -1,57 +1,9 @@
-import Link from 'next/link';
+import Header from '../components/Header';
 
 export default function Home() {
   return (
     <>
-      <header className="bg-surface shadow-sm docked full-width top-0 sticky z-50">
-        <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-          <div className="flex items-center gap-2">
-            <span
-              className="material-symbols-outlined text-primary text-3xl"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              reviews
-            </span>
-            <span className="text-headline-md font-headline-md font-bold text-primary">
-              ReviewBisnisku
-            </span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <a
-              className="text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors duration-200"
-              href="#benefit"
-            >
-              Benefit
-            </a>
-            <a
-              className="text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors duration-200"
-              href="#carakerja"
-            >
-              Cara Kerja
-            </a>
-            <a
-              className="text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors duration-200"
-              href="#testimoni"
-            >
-              Testimoni
-            </a>
-            <a
-              className="text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors duration-200"
-              href="#harga"
-            >
-              Harga
-            </a>
-          </nav>
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="hidden md:block text-primary font-label-md text-label-md hover:opacity-80 transition-opacity">
-              Login
-            </Link>
-            <Link href="/order" className="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
-              Order
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="flex-grow relative">
         {/* Global Texture Overlay (Noise) */}
