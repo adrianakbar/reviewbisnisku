@@ -2,7 +2,7 @@ FROM node:22-alpine AS base
 
 # 1. Tahap Install Dependencies
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
