@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Header() {
   const { data: session } = useSession();
@@ -56,6 +56,14 @@ export default function Header() {
               <span className="text-label-md font-label-md font-semibold text-primary truncate max-w-[160px]">
                 {displayName}
               </span>
+              <div className="w-px h-4 bg-outline-variant/50 mx-1"></div>
+              <button
+                onClick={() => signOut()}
+                className="text-error font-label-md text-label-md hover:opacity-80 transition-opacity flex items-center gap-1"
+                title="Logout"
+              >
+                <span className="material-symbols-outlined text-[18px]">logout</span>
+              </button>
             </div>
           ) : (
             <Link

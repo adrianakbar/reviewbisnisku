@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  reviewbisnisku:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: reviewbisnisku-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      # Tambahkan environment variables lain di sini jika ada (seperti NEXTAUTH_SECRET, dsb)

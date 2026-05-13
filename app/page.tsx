@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Header from '../components/Header';
 
 export default function Home() {
@@ -389,11 +390,12 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
-                  
+                  <Link href="/order">
                   <button className="w-full bg-primary text-on-primary py-4 rounded-full font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2 text-lg">
                     <span className="material-symbols-outlined text-xl">shopping_cart</span>
                     Order Sekarang
                   </button>
+                  </Link>
                 </div>
               </div>
             </div>
