@@ -247,7 +247,7 @@ export default function Home() {
                 Apa Kata Mereka?
               </h2>
               <p className="text-body-lg font-body-lg text-on-surface-variant max-w-2xl mx-auto">
-                Ribuan bisnis telah bertransformasi dengan ulasan berkualitas dari
+                Puluhan bisnis telah bertransformasi dengan ulasan berkualitas dari
                 ReviewBisnisku.
               </p>
             </div>
@@ -333,7 +333,7 @@ export default function Home() {
             {/* Bukti Gambar Review */}
             <div className="mt-16 flex flex-col items-center">
               <h3 className="text-title-lg font-title-lg text-on-surface mb-8 text-center">
-                Bukti Nyata Ulasan Klien Kami
+                Contoh Hasil Review untuk Bisnis Anda
               </h3>
               <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-6 md:pb-0 md:grid md:grid-cols-3 md:gap-8 w-full max-w-6xl mx-auto px-4 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 <div className="relative group overflow-hidden rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-outline-variant/60 flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-auto snap-center">
