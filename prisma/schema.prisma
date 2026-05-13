@@ -18,6 +18,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
+  orders        Order[]
 }
 
 model Account {
@@ -52,4 +53,22 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Order {
+  id           String   @id @default(cuid())
+  userId       String?
+  businessName String
+  mapsUrl      String
+  reviewsCount Int
+  targetStar   Int
+  notes        String?  @db.Text
+  totalPrice   Int
+  status       String   @default("Pending")
+  images       String[]
+  customerWa   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }

@@ -10,6 +10,8 @@ export default function OrderPage() {
   const [step, setStep] = useState(1);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
   
   const { data: session } = useSession();
   const router = useRouter();
@@ -18,8 +20,63 @@ export default function OrderPage() {
   const total = jumlah * hargaPerReview;
 
   const handleKonfirmasiWA = () => {
-    const text = `Halo Admin ReviewBisnisku, saya telah melakukan pembayaran untuk order ${jumlah} review (Total: Rp ${total.toLocaleString('id-ID')}). Berikut lampiran bukti transfer saya:`;
+    const text = `Halo Admin ReviewBisnisku, saya telah melakukan pembayaran untuk order ${jumlah} review (Total: Rp ${total.toLocaleString('id-ID')}). ID Order: ${createdOrderId}. Berikut lampiran bukti transfer saya:`;
     window.open(`https://wa.me/6285172252910?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  const handleLanjutPembayaran = async () => {
+    if (!session) {
+      setShowLoginPopup(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const mapsUrl = (document.getElementById('maps_url') as HTMLInputElement)?.value;
+      const businessName = (document.getElementById('business_name') as HTMLInputElement)?.value;
+      const notes = (document.getElementById('notes') as HTMLTextAreaElement)?.value;
+      const ratingEl = document.querySelector('input[name="rating"]:checked') as HTMLInputElement;
+      const targetStar = ratingEl ? ratingEl.value : "5";
+
+      if (!mapsUrl || !businessName) {
+        alert("Mohon isi Link Maps dan Nama Bisnis.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('businessName', businessName);
+      formData.append('mapsUrl', mapsUrl);
+      formData.append('reviewsCount', jumlah.toString());
+      formData.append('targetStar', targetStar);
+      formData.append('notes', notes);
+      formData.append('totalPrice', total.toString());
+      
+      const fileInput = document.getElementById('upload_gambar') as HTMLInputElement;
+      if (fileInput && fileInput.files) {
+        Array.from(fileInput.files).forEach((file) => {
+          formData.append('images', file);
+        });
+      }
+
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setCreatedOrderId(data.id);
+        setStep(2);
+      } else {
+        alert("Gagal memproses order. Silakan coba lagi.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Terjadi kesalahan.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,17 +274,16 @@ export default function OrderPage() {
               </div>
 
               <button 
-                onClick={() => {
-                  if (!session) {
-                    setShowLoginPopup(true);
-                  } else {
-                    setStep(2);
-                  }
-                }}
-                className="w-full bg-white text-primary py-4 rounded-full font-label-lg font-bold hover:bg-surface-variant transition-colors shadow-md flex items-center justify-center gap-2 group"
+                onClick={handleLanjutPembayaran}
+                disabled={isSubmitting}
+                className="w-full bg-white text-primary py-4 rounded-full font-label-lg font-bold hover:bg-surface-variant transition-colors shadow-md flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <span className="material-symbols-outlined group-hover:scale-110 transition-transform">payment</span>
-                Lanjut Pembayaran
+                {isSubmitting ? (
+                  <span className="material-symbols-outlined animate-spin">progress_activity</span>
+                ) : (
+                  <span className="material-symbols-outlined group-hover:scale-110 transition-transform">payment</span>
+                )}
+                {isSubmitting ? 'Memproses...' : 'Lanjut Pembayaran'}
               </button>
 
               <div className="mt-6 flex items-start gap-3 bg-black/10 p-4 rounded-2xl">
@@ -251,6 +307,9 @@ export default function OrderPage() {
                 </button>
                 
                 <h2 className="text-headline-sm font-headline-sm text-on-surface mb-2 mt-4 md:mt-0">Pembayaran QRIS</h2>
+                <p className="text-body-md font-body-md text-on-surface-variant mb-4">
+                  Order ID: <strong className="text-on-surface">{createdOrderId}</strong>
+                </p>
                 <p className="text-body-md font-body-md text-on-surface-variant mb-8">
                   Silakan scan kode QR di bawah ini untuk membayar total tagihan <strong className="text-primary font-bold">Rp {total.toLocaleString('id-ID')}</strong>
                 </p>

@@ -9,8 +9,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ReviewBisnisku - Manajemen Review Google Maps",
+  title: "ReviewBisnisku",
   description: "Tingkatkan Reputasi Bisnis Anda dengan Review Berkualitas",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({
