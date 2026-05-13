@@ -116,7 +116,7 @@ export default function Home() {
               bisnis Anda.
             </p>
             <button className="bg-primary text-on-primary px-8 py-4 rounded-full font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] flex items-center gap-2">
-              
+              Mulai Sekarang
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
           </div>
