@@ -7,7 +7,15 @@ import path from 'path';
 
 export async function GET() {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const isAdmin = (session.user as any).isAdmin;
+
     const orders = await prisma.order.findMany({
+      where: isAdmin ? undefined : { userId: (session.user as any).id },
       orderBy: { createdAt: 'desc' }
     });
     return NextResponse.json(orders);

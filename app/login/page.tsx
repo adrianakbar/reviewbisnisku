@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { useState, Suspense } from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn, getSession, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 function LoginForm() {
   const router = useRouter();
@@ -14,6 +15,17 @@ function LoginForm() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      if ((session?.user as any)?.isAdmin) {
+        router.push('/admin');
+      } else {
+        router.push(callbackUrl === '/login' ? '/' : callbackUrl);
+      }
+    }
+  }, [status, session, router, callbackUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +41,12 @@ function LoginForm() {
       });
 
       if (!res?.error) {
-        router.push(callbackUrl);
+        const currentSession = await getSession();
+        if ((currentSession?.user as any)?.isAdmin) {
+          router.push('/admin');
+        } else {
+          router.push(callbackUrl);
+        }
         router.refresh();
       } else {
         setError(res.error);
@@ -67,7 +84,9 @@ function LoginForm() {
         <div className="bg-white/90 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] border border-outline-variant/50">
           <button 
             type="button" 
-            onClick={() => signIn('google', { callbackUrl })}
+            onClick={async () => {
+              await signIn('google', { callbackUrl });
+            }}
             className="w-full bg-white border border-outline-variant text-on-surface py-3 rounded-xl font-label-md text-label-md hover:bg-surface-variant transition-colors flex items-center justify-center gap-3 shadow-sm mb-6"
           >
             <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">

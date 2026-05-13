@@ -41,6 +41,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           name: user.name,
           email: user.email,
+          isAdmin: user.isAdmin,
         };
       }
     })
@@ -49,15 +50,17 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.isAdmin = (user as any).isAdmin;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user && token.id) {
         (session.user as any).id = token.id;
+        (session.user as any).isAdmin = token.isAdmin;
       }
       return session;
     }
