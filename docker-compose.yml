@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  reviewbisnisku:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
@@ -9,5 +9,47 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     env_file:
       - .env
+    environment:
+      # Override DATABASE_URL untuk menggunakan container db lokal
+      - DATABASE_URL=postgresql://casaos:casaos@db:5432/db_reviewbisnisku?schema=public
+
+  db:
+    image: postgres
+    container_name: reviewbisnisku-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: casaos
+      POSTGRES_PASSWORD: casaos
+      POSTGRES_DB: db_reviewbisnisku
+    ports:
+      - "5432:5432" # Opsional: ekspos port jika ingin diakses dari host
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U casaos -d db_reviewbisnisku"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    image: node:20-alpine
+    container_name: reviewbisnisku-migrate
+    working_dir: /app
+    volumes:
+      - ./prisma:/app/prisma
+    environment:
+      - DATABASE_URL=postgresql://casaos:casaos@db:5432/db_reviewbisnisku?schema=public
+    command: sh -c "npm install prisma && npx prisma db push"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
